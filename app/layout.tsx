@@ -15,7 +15,7 @@ const fontSans = FontSans({
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | Next.js Blog",
+    template: "%s | Reverie Blog",
     default: seoData.title,
     absolute: seoData.absoluteTitle,
   },
