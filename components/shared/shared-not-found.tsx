@@ -14,7 +14,7 @@ const SharedNotFound = ({ navCategories = [] }: SharedNotFoundProps) => {
   return (
     <div className="bg-white">
       <main className="mx-auto w-full max-w-7xl px-6 pb-16 pt-10 sm:pb-24 lg:px-8">
-        <LogoIcon className="mx-auto h-14 w-14" />
+        <LogoIcon className="mx-auto h-12 w-12 max-h-12 max-w-12" />
         <div className="mx-auto mt-10 max-w-2xl text-center">
           <p className="text-xl font-semibold leading-8 text-gray-900">404</p>
           <h1 className="mt-4 text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
