@@ -162,6 +162,7 @@ export interface Database {
           description: string | null
           id: string
           image: string | null
+          post_id: string | null
           slug: string | null
           status: string | null
           title: string | null
@@ -175,6 +176,7 @@ export interface Database {
           description?: string | null
           id?: string
           image?: string | null
+          post_id?: string | null
           slug?: string | null
           status?: string | null
           title?: string | null
@@ -188,6 +190,7 @@ export interface Database {
           description?: string | null
           id?: string
           image?: string | null
+          post_id?: string | null
           slug?: string | null
           status?: string | null
           title?: string | null
@@ -204,6 +207,12 @@ export interface Database {
             foreignKeyName: "drafts_category_id_fkey"
             columns: ["category_id"]
             referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "drafts_post_id_fkey"
+            columns: ["post_id"]
+            referencedRelation: "posts"
             referencedColumns: ["id"]
           }
         ]
