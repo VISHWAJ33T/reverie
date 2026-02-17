@@ -73,7 +73,7 @@ const SharedOgImage: FC<SharedOgImageProps> = ({
                 tw="flex items-center font-bold text-3xl"
                 style={{ fontFamily: "Inter", fontWeight: "bolder" }}
               >
-                {`https://ub.cafe${slug}`}
+                {`Reverie${slug}`}
               </div>
             </div>
           </div>
