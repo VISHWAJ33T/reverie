@@ -4,7 +4,7 @@ export const defaultEditorContent = {
     {
       type: "heading",
       attrs: { level: 2 },
-      content: [{ type: "text", text: "Introducing Next.js - Blog app" }],
+      content: [{ type: "text", text: "Introducing Reverie Blog app" }],
     },
     {
       type: "paragraph",
