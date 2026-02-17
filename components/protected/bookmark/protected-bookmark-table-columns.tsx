@@ -1,13 +1,14 @@
 "use client";
 
 import { ProtectedBookMarkTableRowActions } from "@/components/protected/bookmark";
-import { categories } from "@/components/protected/post/table//data/data";
+import type { TableCategoryOption } from "@/components/protected/post/table/data/data";
 import { DataTableColumnHeader } from "@/components/protected/post/table/data-table-column-header";
 import { Post } from "@/types/collection";
 import { ColumnDef } from "@tanstack/react-table";
-import { format } from "date-fns";
+import { safeFormatDate } from "@/lib/date-utils";
 
-const ProtectedBookMarkTableColumns: ColumnDef<Post>[] = [
+export function getBookmarkTableColumns(categories: TableCategoryOption[]): ColumnDef<Post>[] {
+  return [
   {
     accessorKey: "title",
     header: ({ column }) => (
@@ -35,14 +36,14 @@ const ProtectedBookMarkTableColumns: ColumnDef<Post>[] = [
       );
 
       if (!label) {
-        return null;
+        return <span className="text-muted-foreground text-sm">—</span>;
       }
 
       return (
         <div className="flex space-x-2">
           <div className="max-w-[500px] justify-start truncate font-medium">
             <span className="inline-flex items-center rounded-full border border-gray-400 px-3 py-1 text-sm text-gray-500">
-              <label.icon className="mr-1 h-4 w-4" />
+              {label.icon && <label.icon className="mr-1 h-4 w-4" />}
               {label.label}
             </span>
           </div>
@@ -60,12 +61,8 @@ const ProtectedBookMarkTableColumns: ColumnDef<Post>[] = [
       <DataTableColumnHeader column={column} title="Created" />
     ),
     cell: ({ row }) => {
-      const date = format(new Date(row.getValue("created_at")), "MM/dd/yyyy");
-
-      if (!date) {
-        return null;
-      }
-
+      const val = row.getValue("created_at") as string | null | undefined;
+      const date = safeFormatDate(val, "MM/dd/yyyy");
       return (
         <div className="flex w-[100px] items-center">
           <span>{date}</span>
@@ -80,5 +77,4 @@ const ProtectedBookMarkTableColumns: ColumnDef<Post>[] = [
     enableSorting: false,
   },
 ];
-
-export default ProtectedBookMarkTableColumns;
+}
