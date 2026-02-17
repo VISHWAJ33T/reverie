@@ -21,6 +21,13 @@ const protectedPostConfig = {
   author: "Author",
   pleaseWait: "Please wait...",
   untitled: "Untitled",
+  publish: "Publish",
+  successPublish: "Post published successfully.",
+  errorPublish: "Couldn't publish post.",
+  unpublish: "Unpublish",
+  successUnpublish: "Post unpublished. It is now a draft.",
+  errorUnpublish: "Couldn't unpublish post.",
+  viewPublished: "View post",
 };
 
 export default protectedPostConfig;

@@ -86,14 +86,17 @@ export default function WysiwygEditor({
     },
   });
 
-  // hydrate the editor with the defaultValue.
+  // Hydrate the editor only once when it's first created. Do NOT re-run when
+  // defaultValue changes (e.g. when parent's content state updates), or the
+  // editor would be reset on every debounced update and the cursor would jump to the end.
+  const initialContentRef = useRef(defaultValue);
   useEffect(() => {
     if (!editor) return;
-
-    if (defaultValue) {
-      editor.commands.setContent(defaultValue);
+    const contentToSet = initialContentRef.current ?? defaultEditorContent;
+    if (contentToSet) {
+      editor.commands.setContent(contentToSet);
     }
-  }, [editor, defaultValue]);
+  }, [editor]);
 
   const prev = useRef("");
 

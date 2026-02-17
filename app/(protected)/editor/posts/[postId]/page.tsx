@@ -47,6 +47,22 @@ async function getPost(postId: string, userId: string) {
   return data ? data : null;
 }
 
+async function getCategories() {
+  const cookieStore = await cookies();
+  const supabase = createClient(cookieStore);
+  const { data, error } = await supabase
+    .from("categories")
+    .select("id, title, slug")
+    .neq("slug", "/");
+
+  if (error) {
+    console.log("Error fetching categories:", error.message);
+    return [];
+  }
+
+  return data ?? [];
+}
+
 // Get Cover image filename and public url
 async function getCoverImageFileName(
   bucketName: string,
@@ -142,7 +158,10 @@ export default async function PostEditorPage({ params }: PostEditorPageProps) {
   const bucketNameGalleryImage =
     process.env.NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET_GALLERY_IMAGE!;
   const userId = await getUserId();
-  const post = await getPost(resolvedParams.postId, userId || "");
+  const [post, categories] = await Promise.all([
+    getPost(resolvedParams.postId, userId || ""),
+    getCategories(),
+  ]);
 
   // Cover image setup
   const coverImageFileName = await getCoverImageFileName(
@@ -186,6 +205,7 @@ export default async function PostEditorPage({ params }: PostEditorPageProps) {
       <Editor
         post={post}
         userId={userId || ""}
+        categories={categories}
         coverImageFileName={coverImageFileName || ""}
         coverImagePublicUrl={coverImagePublicUrl || ""}
         galleryImageFileNames={galleryImageFileNames || []}

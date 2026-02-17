@@ -1,9 +1,9 @@
 import {
-  ProtectedBookMarkTableColumns,
+  BookmarksDataTable,
   ProtectedBookMarkTableTitle,
 } from "@/components/protected/bookmark";
-import { DataTable } from "@/components/protected/post/table/data-table";
 import { SharedTableEmpty } from "@/components/shared";
+import { getAllCategories } from "@/lib/categories";
 import { detailBookMarkConfig } from "@/config/detail";
 import { sharedEmptyConfig } from "@/config/shared";
 import { BookMarkWithPost, Post } from "@/types/collection";
@@ -51,20 +51,24 @@ const BookmarksPage: React.FC<BookmarksPageProps> = async ({
   const from = (page - 1) * limit;
   const to = page ? from + limit : limit;
 
-  // Fetch posts
-  const { data, error } = await supabase
-    .from("bookmarks")
-    .select(`*, posts(*)`)
-    .order("created_at", { ascending: false })
-    .match({ user_id: user?.id })
-    .range(from, to)
-    .returns<BookMarkWithPost[]>();
+  const [categories, bookmarksResult] = await Promise.all([
+    getAllCategories(),
+    supabase
+      .from("bookmarks")
+      .select(`*, posts(*)`)
+      .order("created_at", { ascending: false })
+      .match({ user_id: user?.id })
+      .range(from, to)
+      .returns<BookMarkWithPost[]>(),
+  ]);
 
-  if (!data || error || !data.length) {
-    notFound;
+  const { data, error } = bookmarksResult;
+
+  if (error) {
+    notFound();
   }
 
-  data?.map((bookmark) => {
+  data?.forEach((bookmark) => {
     posts.push(bookmark.posts);
   });
 
@@ -74,7 +78,7 @@ const BookmarksPage: React.FC<BookmarksPageProps> = async ({
         {posts?.length && posts?.length > 0 ? (
           <>
             <ProtectedBookMarkTableTitle />
-            <DataTable data={posts} columns={ProtectedBookMarkTableColumns} />
+            <BookmarksDataTable data={posts} categories={categories} />
           </>
         ) : (
           <SharedTableEmpty

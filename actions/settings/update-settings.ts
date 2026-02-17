@@ -20,6 +20,7 @@ export async function UpdateSettings(
         username: profile.userName,
         avatar_url: profile.avatarUrl,
         website: profile.website,
+        updated_at: new Date().toISOString(),
       })
       .eq("id", profile.id);
 

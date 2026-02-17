@@ -10,5 +10,8 @@ interface DataTableRowActionsProps<TData> {
 export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
-  return <PostEditButton id={row.getValue("id")} />;
+  const id = row.getValue("id") as string;
+  const status = (row.getValue("status") as string | null) ?? "draft";
+  const slug = (row.original as { slug?: string | null }).slug ?? "";
+  return <PostEditButton id={id} status={status} slug={slug} />;
 }

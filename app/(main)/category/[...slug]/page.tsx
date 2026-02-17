@@ -1,10 +1,9 @@
 import { MainPostItem } from "@/components/main";
 import { SharedEmpty, SharedPagination } from "@/components/shared";
-import { mainCategoryConfig } from "@/config/main";
 import { seoData } from "@/config/root/seo";
+import { getCategoryBySlug } from "@/lib/categories";
 import { getOgImageUrl, getUrl } from "@/lib/utils";
 import { PostWithCategoryWithProfile } from "@/types/collection";
-import type { Database } from "@/types/supabase";
 import { createClient } from "@/utils/supabase/server";
 import { Metadata } from "next";
 import { cookies } from "next/headers";
@@ -23,50 +22,48 @@ export async function generateMetadata({
 }: CategoryPageProps): Promise<Metadata> {
   const resolvedParams = await params;
   const slug = resolvedParams?.slug?.join("/");
-  const category = mainCategoryConfig.find(
-    (category) => category.slug === slug,
-  );
+  const category = await getCategoryBySlug(slug ?? "");
 
   if (!category) {
     return {};
   }
 
   return {
-    title: category?.title,
+    title: category.title ?? undefined,
     description: seoData.absoluteTitle,
     authors: {
       name: seoData.author.name,
       url: seoData.author.twitterUrl,
     },
     openGraph: {
-      title: category?.title,
+      title: category.title ?? undefined,
       description: seoData.absoluteTitle,
       type: "article",
-      url: `${getUrl()}${category?.slug}`,
+      url: `${getUrl()}/category/${category.slug}`,
       images: [
         {
           url: getOgImageUrl(
-            category?.title,
+            category.title ?? "",
             seoData.absoluteTitle,
             seoData.tags,
-            category?.slug,
+            category.slug ?? "",
           ),
           width: 1200,
           height: 630,
-          alt: category?.title,
+          alt: category.title ?? "",
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: category?.title,
+      title: category.title ?? undefined,
       description: seoData.absoluteTitle,
       images: [
         getOgImageUrl(
-          category?.title,
+          category.title ?? "",
           seoData.absoluteTitle,
           seoData.tags,
-          category?.slug,
+          category.slug ?? "",
         ),
       ],
     },
@@ -81,16 +78,18 @@ export default async function CategoryPage({
   const resolvedSearchParams = await searchParams;
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
-  // Get category by slug
   const slug = resolvedParams?.slug?.join("/");
-  const category = mainCategoryConfig.find(
-    (category) => category.slug === slug,
-  );
+  const category = await getCategoryBySlug(slug ?? "");
+
+  if (!category) {
+    notFound();
+  }
+
   // Fetch total pages
   const { count } = await supabase
     .from("posts")
     .select("*", { count: "exact", head: true })
-    .eq("category_id", category?.id ? category?.id : "");
+    .eq("category_id", category.id);
 
   // Pagination
   const limit = 10;
@@ -105,15 +104,10 @@ export default async function CategoryPage({
   const to = page ? from + limit : limit;
 
   // Fetch posts
-
-  if (!category) {
-    notFound();
-  }
-
   const { data, error } = await supabase
     .from("posts")
     .select(`*, categories(*), profiles(*)`)
-    .match({ category_id: category?.id, published: true })
+    .match({ category_id: category.id, published: true })
     .order("created_at", { ascending: false })
     .range(from, to)
     .returns<PostWithCategoryWithProfile[]>();

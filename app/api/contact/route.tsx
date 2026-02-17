@@ -7,8 +7,16 @@ import * as z from "zod";
 
 export async function POST(req: NextRequest) {
   try {
+    if (!process.env.GOOGLE_EMAIL?.trim() || !process.env.GOOGLE_PASSWORD?.trim()) {
+      console.error("[Contact API] Missing GOOGLE_EMAIL or GOOGLE_PASSWORD in env");
+      return new Response(
+        JSON.stringify({ success: false, error: "Email is not configured" }),
+        { status: 503, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
     const body = await req.json();
-    
+
     // Validate input
     const validatedData = contactFormSchema.parse(body);
     const { name, email, message } = validatedData;
@@ -24,31 +32,47 @@ export async function POST(req: NextRequest) {
       html: emailHtml,
     };
 
-    // Send email using the transporter
     await transporter.sendMail(options);
-    return new Response(JSON.stringify({ success: true }), { 
+    return new Response(JSON.stringify({ success: true }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("[Contact API Error]", error);
-    
-    if (error instanceof z.ZodError) {
-      return new Response(JSON.stringify({ 
-        success: false, 
-        errors: error.errors.map(e => ({ field: e.path.join("."), message: e.message }))
-      }), { 
-        status: 422,
-        headers: { "Content-Type": "application/json" },
-      });
+    const isAuthError =
+      error &&
+      typeof error === "object" &&
+      "code" in error &&
+      (error as { code?: string }).code === "EAUTH";
+
+    if (isAuthError) {
+      console.error(
+        "[Contact API] Gmail auth failed. Use App Password if 2FA is on: https://support.google.com/accounts/answer/185833"
+      );
+    } else {
+      console.error("[Contact API Error]", error);
     }
 
-    return new Response(JSON.stringify({ 
-      success: false, 
-      error: "Failed to send message" 
-    }), { 
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    if (error instanceof z.ZodError) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          errors: error.errors.map((e) => ({
+            field: e.path.join("."),
+            message: e.message,
+          })),
+        }),
+        { status: 422, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: isAuthError
+          ? "Email configuration error. Please try again later."
+          : "Failed to send message",
+      }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
   }
 }

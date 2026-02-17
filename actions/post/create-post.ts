@@ -19,6 +19,7 @@ export async function CreatePost(
       .insert({
         title: post.title,
         author_id: post.user_id,
+        status: "draft",
       })
       .select()
       .single();

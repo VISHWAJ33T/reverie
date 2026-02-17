@@ -7,14 +7,17 @@ import { Table } from "@tanstack/react-table";
 import { useMemo } from "react";
 import { DataTableFacetedFilter } from "./data-table-faceted-filter";
 import { DataTableViewOptions } from "./data-table-view-options";
-import { categories, statuses } from "./data/data";
+import type { TableCategoryOption } from "./data/data";
+import { statuses } from "./data/data";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
+  categories?: TableCategoryOption[];
 }
 
 export function DataTableToolbar<TData>({
   table,
+  categories = [],
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
 
@@ -45,7 +48,7 @@ export function DataTableToolbar<TData>({
             options={statuses}
           />
         )}
-        {hasCategoryColumn && (
+        {hasCategoryColumn && categories.length > 0 && (
           <DataTableFacetedFilter
             column={table.getColumn("category_id")}
             title="Category"

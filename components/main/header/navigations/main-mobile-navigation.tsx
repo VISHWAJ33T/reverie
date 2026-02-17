@@ -1,11 +1,16 @@
 "use client";
 
+import type { NavCategory } from "@/lib/categories";
 import { LoginMenu } from "@/components/login";
 import { Disclosure } from "@headlessui/react";
 import React, { Fragment } from "react";
 import { MainMobileMenuButton, MainMobileNavigationMenu } from "./menu";
 
-const MainMobileNavigation = () => {
+interface MainMobileNavigationProps {
+  navCategories: NavCategory[];
+}
+
+const MainMobileNavigation = ({ navCategories }: MainMobileNavigationProps) => {
   return (
     <Disclosure>
       {({ open }) => (
@@ -23,7 +28,7 @@ const MainMobileNavigation = () => {
           </nav>
 
           {/* Mobile Navigation */}
-          <MainMobileNavigationMenu fragment={Fragment} />
+          <MainMobileNavigationMenu fragment={Fragment} navCategories={navCategories} />
         </>
       )}
     </Disclosure>

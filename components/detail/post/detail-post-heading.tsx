@@ -6,16 +6,28 @@ import Image from "next/image";
 import { FC } from "react";
 import { ReadTimeResults } from "reading-time";
 
-async function getPublicImageUrl(postId: string, fileName: string) {
+async function getPublicImageUrl(
+  authorId: string | null,
+  pathId: string,
+  image: string
+) {
+  if (!image?.trim()) return "/images/not-found.jpg";
+  // If stored value is already a full URL, use it as-is
+  if (image.startsWith("http://") || image.startsWith("https://")) {
+    return image;
+  }
+  if (!authorId?.trim()) return "/images/not-found.jpg";
+
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
   const bucketName =
-    process.env.NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET_POSTS || "posts";
+    process.env.NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET_COVER_IMAGE ||
+    "cover-image";
   const { data } = supabase.storage
     .from(bucketName)
-    .getPublicUrl(`${postId}/${fileName}`);
+    .getPublicUrl(`${authorId}/${pathId}/${image}`);
 
-  if (data && data.publicUrl) return data.publicUrl;
+  if (data?.publicUrl) return data.publicUrl;
 
   return "/images/not-found.jpg";
 }
@@ -24,6 +36,7 @@ interface DetailPostHeadingProps {
   id: string;
   title: string;
   image: string;
+  authorId: string | null;
   authorImage: string;
   authorName: string;
   date: string;
@@ -35,17 +48,20 @@ const DetailPostHeading: FC<DetailPostHeadingProps> = async ({
   id,
   title,
   image,
+  authorId,
   authorName,
   authorImage,
   date,
   category,
   readTime,
 }) => {
+  // Use post id for path: cover is copied to author_id/post_id/filename on publish.
+  const pathId = id;
   return (
     <section className="flex flex-col items-start justify-between">
       <div className="relative w-full">
         <Image
-          src={await getPublicImageUrl(id, image)}
+          src={await getPublicImageUrl(authorId, pathId, image)}
           alt={title}
           width={512}
           height={288}
@@ -53,6 +69,7 @@ const DetailPostHeading: FC<DetailPostHeadingProps> = async ({
           placeholder={`data:image/svg+xml;base64,${toBase64(
             shimmer(512, 288),
           )}`}
+          unoptimized
         />
         <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10" />
       </div>

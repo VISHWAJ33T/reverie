@@ -1,5 +1,7 @@
 "use client";
 
+import { PublishDraft } from "@/actions/post/publish-draft";
+import { UnpublishPost } from "@/actions/post/unpublish-post";
 import { UpdatePost } from "@/actions/post/update-post";
 import WysiwygEditor from "@/components/protected/editor/wysiwyg/wysiwyg-editor";
 import {
@@ -31,7 +33,6 @@ import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
-import { mainCategoryConfig } from "@/config/main";
 import { protectedEditorConfig, protectedPostConfig } from "@/config/protected";
 import { postEditFormSchema } from "@/lib/validation/post";
 import { Draft } from "@/types/collection";
@@ -39,7 +40,7 @@ import { PaperClipIcon } from "@heroicons/react/20/solid";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SparklesIcon, Loader2 as SpinnerIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import slugify from "react-slugify";
@@ -60,6 +61,7 @@ type FormData = z.infer<typeof postEditFormSchema>;
 interface EditorProps {
   post: Draft;
   userId: string;
+  categories: { id: string; title: string | null; slug: string | null }[];
   coverImageFileName: string;
   coverImagePublicUrl: string;
   galleryImageFileNames: string[];
@@ -71,6 +73,7 @@ type EditorFormValues = z.infer<typeof postEditFormSchema>;
 const Editor: FC<EditorProps> = ({
   post,
   userId,
+  categories,
   coverImageFileName,
   coverImagePublicUrl,
   galleryImageFileNames,
@@ -116,12 +119,20 @@ const Editor: FC<EditorProps> = ({
     toast.error(error || protectedEditorConfig.errorMessageImageUpload);
   };
 
-  // Default values for the form
+  // Default category: use post's category if valid, else first from DB
+  const validCategoryIds = categories.map((c) => c.id);
+  const defaultCategoryId =
+    post.category_id && validCategoryIds.includes(post.category_id)
+      ? post.category_id
+      : categories[0]?.id ?? "";
+
+  // Default values for the form. Use coverImageFileName when post.image is empty
+  // so that after uploading a cover image (before save) the filename is persisted on next save.
   const defaultValues: Partial<EditorFormValues> = {
     title: post.title ?? "Untitled",
     slug: post.slug ?? `post-${v4()}`,
-    image: post.image ?? "",
-    categoryId: post.category_id ?? protectedEditorConfig.defaultCategoryId,
+    image: post.image ?? coverImageFileName ?? "",
+    categoryId: defaultCategoryId,
     description: post.description ?? "Post description",
     content: content ?? protectedEditorConfig.placeholderContent,
   };
@@ -131,6 +142,14 @@ const Editor: FC<EditorProps> = ({
     defaultValues,
     mode: "onChange",
   });
+
+  // After upload, server refetches and passes new coverImageFileName; sync it into the form
+  // so the next save persists the filename (defaultValues only apply on mount).
+  useEffect(() => {
+    if (coverImageFileName?.trim()) {
+      form.setValue("image", coverImageFileName);
+    }
+  }, [coverImageFileName, form]);
 
   async function onSubmit(data: EditorFormValues) {
     setShowLoadingAlert(true);
@@ -154,6 +173,57 @@ const Editor: FC<EditorProps> = ({
     }
 
     setIsSaving(false);
+    setShowLoadingAlert(false);
+  }
+
+  async function handlePublish() {
+    setShowLoadingAlert(true);
+    setIsSaving(true);
+
+    const data = form.getValues();
+    const saveResponse = await UpdatePost({
+      id: post.id,
+      title: data.title,
+      slug: data.slug,
+      image: data.image,
+      description: data.description,
+      content: content,
+      categoryId: data.categoryId,
+    });
+
+    if (!saveResponse) {
+      toast.error("Save failed. Fix errors before publishing.");
+      setIsSaving(false);
+      setShowLoadingAlert(false);
+      return;
+    }
+
+    const publishResult = await PublishDraft(post.id);
+
+    if (publishResult.success && publishResult.data) {
+      toast.success(protectedPostConfig.successPublish);
+      router.push(`/posts/${publishResult.data.postSlug}`);
+    } else {
+      toast.error(
+        !publishResult.success ? publishResult.error : protectedPostConfig.errorPublish
+      );
+    }
+
+    setIsSaving(false);
+    setShowLoadingAlert(false);
+  }
+
+  async function handleUnpublish() {
+    setShowLoadingAlert(true);
+    const result = await UnpublishPost(post.id);
+    if (result.success) {
+      toast.success(protectedPostConfig.successUnpublish);
+      router.refresh();
+    } else {
+      toast.error(
+        !result.success ? result.error : protectedPostConfig.errorUnpublish
+      );
+    }
     setShowLoadingAlert(false);
   }
 
@@ -243,22 +313,19 @@ const Editor: FC<EditorProps> = ({
                         defaultValue={field.value}
                         className="flex flex-col space-y-1"
                       >
-                        {mainCategoryConfig.map(
-                          (category) =>
-                            category.slug !== "/" && (
-                              <FormItem
-                                key={category.id}
-                                className="flex items-center space-x-3 space-y-0"
-                              >
-                                <FormControl>
-                                  <RadioGroupItem value={category.id} />
-                                </FormControl>
-                                <FormLabel className="font-normal">
-                                  {category.title}
-                                </FormLabel>
-                              </FormItem>
-                            ),
-                        )}
+                        {categories.map((category) => (
+                          <FormItem
+                            key={category.id}
+                            className="flex items-center space-x-3 space-y-0"
+                          >
+                            <FormControl>
+                              <RadioGroupItem value={category.id} />
+                            </FormControl>
+                            <FormLabel className="font-normal">
+                              {category.title ?? category.slug ?? "Unnamed"}
+                            </FormLabel>
+                          </FormItem>
+                        ))}
                       </RadioGroup>
                     </FormControl>
                     <FormMessage />
@@ -435,7 +502,7 @@ const Editor: FC<EditorProps> = ({
             }}
           />
 
-          <div className="infline-flex flex items-center justify-start space-x-3">
+          <div className="flex items-center justify-start gap-3">
             <Button
               type="submit"
               className="flex !bg-gray-900 px-10 !text-white hover:!bg-gray-800"
@@ -443,6 +510,27 @@ const Editor: FC<EditorProps> = ({
             >
               {protectedEditorConfig.submit}
             </Button>
+            {post.status !== "published" && (
+              <Button
+                type="button"
+                onClick={handlePublish}
+                className="flex border-green-600 bg-green-600 px-10 text-white hover:bg-green-700"
+                disabled={isSaving}
+              >
+                {protectedPostConfig.publish}
+              </Button>
+            )}
+            {post.status === "published" && (
+              <Button
+                type="button"
+                onClick={handleUnpublish}
+                variant="outline"
+                className="flex border-amber-600 px-10 text-amber-700 hover:bg-amber-50"
+                disabled={isSaving}
+              >
+                {protectedPostConfig.unpublish}
+              </Button>
+            )}
             <Button
               type="button"
               onClick={() => router.back()}

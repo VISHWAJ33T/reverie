@@ -1,13 +1,15 @@
 "use client";
 
+import type { TableCategoryOption } from "./data/data";
 import { Draft } from "@/types/collection";
 import { ColumnDef } from "@tanstack/react-table";
-import { format } from "date-fns";
+import { safeFormatDate } from "@/lib/date-utils";
 import { DataTableColumnHeader } from "./data-table-column-header";
 import { DataTableRowActions } from "./data-table-row-actions";
-import { categories, statuses } from "./data/data";
+import { statuses } from "./data/data";
 
-export const columns: ColumnDef<Draft>[] = [
+export function getColumns(categories: TableCategoryOption[]): ColumnDef<Draft>[] {
+  return [
   {
     accessorKey: "title",
     header: ({ column }) => (
@@ -35,14 +37,16 @@ export const columns: ColumnDef<Draft>[] = [
       );
 
       if (!label) {
-        return null;
+        return (
+          <span className="text-muted-foreground text-sm">—</span>
+        );
       }
 
       return (
         <div className="flex space-x-2">
           <div className="max-w-[500px] justify-start truncate font-medium">
             <span className="inline-flex items-center rounded-full border border-gray-400 px-3 py-1 text-sm text-gray-500">
-              <label.icon className="mr-1 h-4 w-4" />
+              {label.icon && <label.icon className="mr-1 h-4 w-4" />}
               {label.label}
             </span>
           </div>
@@ -60,12 +64,16 @@ export const columns: ColumnDef<Draft>[] = [
       <DataTableColumnHeader column={column} title="Status" />
     ),
     cell: ({ row }) => {
-      const status = statuses.find(
-        (status) => status.value === row.getValue("status"),
-      );
+      const statusValue = row.getValue("status") as string | null;
+      const effectiveStatus = statusValue && statusValue !== "" ? statusValue : "draft";
+      const status = statuses.find((s) => s.value === effectiveStatus);
 
       if (!status) {
-        return null;
+        return (
+          <span className="text-muted-foreground text-sm">
+            {effectiveStatus === "draft" ? "Draft" : effectiveStatus}
+          </span>
+        );
       }
 
       return (
@@ -78,7 +86,10 @@ export const columns: ColumnDef<Draft>[] = [
       );
     },
     filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
+      const statusValue = row.getValue(id) as string | null;
+      const effectiveStatus =
+        statusValue && statusValue !== "" ? statusValue : "draft";
+      return value.includes(effectiveStatus);
     },
   },
   {
@@ -87,12 +98,8 @@ export const columns: ColumnDef<Draft>[] = [
       <DataTableColumnHeader column={column} title="Created" />
     ),
     cell: ({ row }) => {
-      const date = format(new Date(row.getValue("created_at")), "MM/dd/yyyy");
-
-      if (!date) {
-        return null;
-      }
-
+      const val = row.getValue("created_at") as string | null | undefined;
+      const date = safeFormatDate(val, "MM/dd/yyyy");
       return (
         <div className="flex w-[100px] items-center">
           <span>{date}</span>
@@ -110,3 +117,4 @@ export const columns: ColumnDef<Draft>[] = [
     enableSorting: false,
   },
 ];
+}

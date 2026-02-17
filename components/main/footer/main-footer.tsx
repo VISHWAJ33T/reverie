@@ -1,8 +1,13 @@
+import type { NavCategory } from "@/lib/categories";
 import { mainFooterConfig } from "@/config/main";
 import Link from "next/link";
 import MainNewsletter from "./main-newsletter";
 
-const MainFooter = () => {
+interface MainFooterProps {
+  navCategories?: NavCategory[];
+}
+
+const MainFooter = ({ navCategories = [] }: MainFooterProps) => {
   return (
     <footer
       className="border-t border-gray-900/10 bg-white shadow-sm"
@@ -20,17 +25,15 @@ const MainFooter = () => {
                   Categories
                 </h3>
                 <ul role="list" className="mt-6 space-y-4">
-                  {mainFooterConfig.categories.map((category) => (
-                    <li key={category.slug}>
+                  {navCategories.map((category) => (
+                    <li key={category.id}>
                       <Link
                         href={
-                          category.slug === "/"
-                            ? category.slug
-                            : `/category/${category.slug}`
+                          category.slug ? `/category/${category.slug}` : "#"
                         }
                         className="text-sm leading-6 text-gray-600 hover:text-gray-900 hover:underline"
                       >
-                        {category.title}
+                        {category.title ?? category.slug ?? "Category"}
                       </Link>
                     </li>
                   ))}

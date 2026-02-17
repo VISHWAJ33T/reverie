@@ -1,10 +1,15 @@
+import type { NavCategory } from "@/lib/categories";
 import { LoginMenu } from "@/components/login";
 import { IconWrapperRounded, LogoIcon } from "@/icons";
 import Link from "next/link";
 import React from "react";
 import { MainDesktopNavigationMenu } from "./menu";
 
-const MainDesktopNavigation = () => {
+interface MainDesktopNavigationProps {
+  navCategories: NavCategory[];
+}
+
+const MainDesktopNavigation = ({ navCategories }: MainDesktopNavigationProps) => {
   return (
     <>
       <nav className="mx-auto hidden max-w-5xl items-center justify-between px-2 py-4 md:flex">
@@ -20,7 +25,7 @@ const MainDesktopNavigation = () => {
         {/* Navigation */}
         <div>
           <div className="flex flex-1 gap-x-6">
-            <MainDesktopNavigationMenu />
+            <MainDesktopNavigationMenu navCategories={navCategories} />
           </div>
         </div>
 

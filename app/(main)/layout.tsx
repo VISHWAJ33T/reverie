@@ -1,10 +1,13 @@
 import { MainFooter, MainGrid, MainHeader } from "@/components/main";
+import { getNavCategories } from "@/lib/categories";
 import { ReactNode } from "react";
 
-export default function MainLayout({ children }: { children: ReactNode }) {
+export default async function MainLayout({ children }: { children: ReactNode }) {
+  const navCategories = await getNavCategories();
+
   return (
     <>
-      <MainHeader />
+      <MainHeader navCategories={navCategories} />
       <MainGrid>
         <div className="min-h-full py-10">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -12,7 +15,7 @@ export default function MainLayout({ children }: { children: ReactNode }) {
           </div>
         </div>
       </MainGrid>
-      <MainFooter />
+      <MainFooter navCategories={navCategories} />
     </>
   );
 }

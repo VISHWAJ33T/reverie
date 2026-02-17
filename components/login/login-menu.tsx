@@ -30,15 +30,18 @@ const LoginMenu = () => {
   }, [supabase.auth]);
 
   useEffect(() => {
+    const userId = session?.user?.id;
+    if (!userId) {
+      setAvatarUrl("");
+      return;
+    }
     async function fetchAvatar() {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from("profiles")
         .select("*")
-        .match({ id: session?.user.id })
+        .eq("id", userId)
         .single<Profile>();
-      if (data) {
-        setAvatarUrl(data.avatar_url ? data.avatar_url : "");
-      }
+      if (data?.avatar_url) setAvatarUrl(data.avatar_url);
     }
     fetchAvatar();
   }, [session, supabase]);
