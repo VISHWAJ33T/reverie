@@ -6,6 +6,7 @@ import {
 } from "@/components/detail/post";
 import { DetailPostScrollUpButton } from "@/components/detail/post/buttons";
 import { seoData } from "@/config/root/seo";
+import { postContentToHtml } from "@/lib/post-content";
 import { getOgImageUrl, getUrl, sanitizeHtml } from "@/lib/utils";
 import {
   CommentWithProfile,
@@ -162,7 +163,10 @@ export default async function PostPage({ params }: PostPageProps) {
 
   // Get comments
   const comments = await getComments(post.id as string);
-  const readTime = readingTime(post.content ? post.content : "");
+  const contentForReading = postContentToHtml(post.content ?? "");
+  const readTime = readingTime(
+    contentForReading.replace(/<[^>]*>/g, " ") || ""
+  );
 
   return (
     <>
@@ -176,9 +180,10 @@ export default async function PostPage({ params }: PostPageProps) {
                   id={post.id}
                   title={post.title as string}
                   image={post.image as string}
+                  authorId={post.author_id}
                   authorName={post.profiles.full_name as string}
                   authorImage={post.profiles.avatar_url as string}
-                  date={format(parseISO(post.updated_at!), "MMMM dd, yyyy")}
+                  date={format(parseISO(post.updated_at ?? post.created_at ?? new Date().toISOString()), "MMMM dd, yyyy")}
                   category={post.categories?.title as string}
                   readTime={readTime as ReadTimeResults}
                 />
@@ -200,7 +205,9 @@ export default async function PostPage({ params }: PostPageProps) {
               <div className="relative mx-auto max-w-3xl border-slate-500/50 py-5">
                 <div
                   className="lg:prose-md prose"
-                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(post.content || "") }}
+                  dangerouslySetInnerHTML={{
+                  __html: sanitizeHtml(postContentToHtml(post.content)),
+                }}
                 />
               </div>
               <div className="mx-auto mt-10">
