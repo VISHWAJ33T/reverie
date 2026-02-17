@@ -1,9 +1,9 @@
 import PostTableEmpty from "@/components/protected/post/post-emtpy-table";
 import PostRefreshOnce from "@/components/protected/post/post-refresh-once";
 import PostTableTitle from "@/components/protected/post/post-table-title";
-import { columns } from "@/components/protected/post/table/columns";
-import { DataTable } from "@/components/protected/post/table/data-table";
+import { PostsDataTable } from "@/components/protected/post/posts-data-table";
 import { protectedPostConfig } from "@/config/protected";
+import { getAllCategories } from "@/lib/categories";
 import { Draft } from "@/types/collection";
 import type { Database } from "@/types/supabase";
 import { createClient } from "@/utils/supabase/server";
@@ -27,21 +27,24 @@ const PostsPage: FC<PostsPageProps> = async ({ searchParams }) => {
   const resolvedSearchParams = await searchParams;
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
-  // Fetch user data
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Fetch posts
-  const { data, error } = await supabase
-    .from("drafts")
-    .select(`*, categories(*)`)
-    .order("created_at", { ascending: false })
-    .match({ author_id: user?.id })
-    .returns<Draft[]>();
+  const [categories, postsResult] = await Promise.all([
+    getAllCategories(),
+    supabase
+      .from("drafts")
+      .select(`*, categories(*)`)
+      .order("created_at", { ascending: false })
+      .match({ author_id: user?.id })
+      .returns<Draft[]>(),
+  ]);
 
-  if (!data || error || !data.length) {
-    notFound;
+  const { data, error } = postsResult;
+
+  if (error) {
+    notFound();
   }
   return (
     <>
@@ -49,7 +52,7 @@ const PostsPage: FC<PostsPageProps> = async ({ searchParams }) => {
         {data?.length && data?.length > 0 ? (
           <>
             <PostTableTitle />
-            <DataTable data={data ? data : []} columns={columns} />
+            <PostsDataTable data={data} categories={categories} />
           </>
         ) : (
           <PostTableEmpty />
