@@ -15,9 +15,9 @@ const MainDesktopNavigation = ({ navCategories }: MainDesktopNavigationProps) =>
       <nav className="mx-auto hidden max-w-5xl items-center justify-between px-2 py-4 md:flex">
         {/* Logo */}
         <div className="flex flex-1 justify-start pl-2">
-          <Link href="/">
-            <IconWrapperRounded>
-              <LogoIcon className="h-10 w-10" />
+          <Link href="/" className="flex shrink-0 items-center">
+            <IconWrapperRounded className="size-10">
+              <LogoIcon className="h-8 w-8 max-h-8 max-w-8" />
             </IconWrapperRounded>
           </Link>
         </div>
