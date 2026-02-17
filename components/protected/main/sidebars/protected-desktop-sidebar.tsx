@@ -16,7 +16,7 @@ const ProtectedDesktopSideBar = () => {
         <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pb-4">
           <Link href={getUrl()} className="flex h-16 shrink-0 items-center">
             <Image
-              className="h-[40px]w-[40px]w-auto"
+              className="h-10 w-10 max-h-10 max-w-10 object-contain"
               src="/logo.png"
               alt="Reverie Logo"
               height={40}

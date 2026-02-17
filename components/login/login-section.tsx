@@ -78,13 +78,13 @@ const LoginSection: React.FC<LoginSectionProps> = ({ setOpen }) => {
     <>
       <div className="mx-auto w-full justify-center rounded-md border border-black/5 bg-gray-50 align-middle shadow-md">
         <div className="flex flex-col items-center justify-center space-y-3 border-b px-4 py-6 pt-8 text-center">
-          <Link href="/">
+          <Link href="/" className="flex shrink-0">
             <Image
               src="/logo.png"
               alt="Reverie Logo"
-              className="h-16 w-16 rounded-full"
-              width={64}
-              height={64}
+              className="h-12 w-12 max-h-12 max-w-12 rounded-full object-contain"
+              width={48}
+              height={48}
               priority
             />
           </Link>

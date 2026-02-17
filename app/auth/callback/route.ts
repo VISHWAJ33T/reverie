@@ -9,8 +9,22 @@ export async function GET(request: Request) {
   // https://supabase.com/docs/guides/auth/auth-helpers/nextjs#managing-sign-in-with-code-exchange
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
-  const redirectPath = requestUrl.searchParams.get("redirect");
-  const redirect = getUrl() + redirectPath;
+  const redirectParam = requestUrl.searchParams.get("redirect");
+
+  const getSafeRedirectPath = (value: string | null): string => {
+    const trimmed = (value ?? "").trim();
+    if (!trimmed) return "/dashboard";
+
+    // Only allow relative redirects to prevent malformed URLs/open redirects.
+    if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+      return "/dashboard";
+    }
+
+    if (trimmed.startsWith("/")) return trimmed;
+    return `/${trimmed}`;
+  };
+
+  const redirectUrl = new URL(getSafeRedirectPath(redirectParam), requestUrl.origin);
 
   if (code) {
     const cookieStore = await cookies();
@@ -19,7 +33,7 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
       // URL to redirect to after sign in process completes
-      return NextResponse.redirect(redirect ? redirect : requestUrl.origin);
+      return NextResponse.redirect(redirectUrl);
     }
     // Log the error for debugging
     console.error("[Auth Callback Error]", {

@@ -10,8 +10,8 @@ const LogoIcon: FC<LogoIconProps> = ({ className = "" }) => {
     <svg
       version="1.1"
       xmlns="http://www.w3.org/2000/svg"
-      width="773"
-      height="773"
+      viewBox="0 0 773 773"
+      className={`block size-full shrink-0 ${className}`}
     >
       <path
         d="M0 0 C255.09 0 510.18 0 773 0 C773 255.09 773 510.18 773 773 C517.91 773 262.82 773 0 773 C0 517.91 0 262.82 0 0 Z "
