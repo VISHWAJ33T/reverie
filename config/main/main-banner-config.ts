@@ -1,8 +1,8 @@
 const mainBannerConfig = {
-  title: "Fullstack Blogging App",
-  description: "built with Next.js and Supabase.",
-  link: "https://github.com/timtbdev/Next.js-Blog-App",
-  button: "Github",
+  title: "Reverie",
+  description: "A modern blogging platform for writers and creators.",
+  link: "#",
+  button: "Get Started",
 };
 
 export default mainBannerConfig;
