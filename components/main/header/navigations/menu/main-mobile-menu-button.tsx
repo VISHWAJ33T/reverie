@@ -13,7 +13,7 @@ const MainMobileMenuButton: FC<MainMobileMenuButtonProps> = ({ open }) => {
     <>
       <Disclosure.Button
         className={cn(
-          "inline-flex h-10 w-10 items-center justify-center rounded-md bg-gradient-to-t from-gray-100 via-gray-50 to-white text-gray-500 shadow-md shadow-black/5 ring-1 ring-black/10 transition duration-200 hover:bg-gradient-to-tr hover:from-gray-100 hover:via-gray-100 hover:to-gray-50 active:scale-[96%] active:ring-black/20",
+          "inline-flex h-10 w-10 items-center justify-center rounded-md bg-white/10 text-white shadow-md ring-1 ring-white/20 transition duration-200 hover:bg-white/20 active:scale-[96%] active:ring-white/30",
         )}
       >
         <span

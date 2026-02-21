@@ -30,7 +30,7 @@ const MainMobileNavigationMenu: FC<MainMobileNavigationMenuProps> = ({
         leaveFrom="opacity-100 translate-y-0"
         leaveTo="opacity-0 translate-y-1"
       >
-        <Disclosure.Panel className="w-full border-t border-black/5 bg-gray-50 lg:hidden">
+        <Disclosure.Panel className="w-full border-t border-white/10 bg-black lg:hidden">
           {navCategories.map((category) => {
             const Icon = getCategoryIcon(category.slug);
             return (
@@ -43,9 +43,9 @@ const MainMobileNavigationMenu: FC<MainMobileNavigationMenuProps> = ({
                   )
                 }
               >
-                <div className="group flex items-center gap-x-6 border-b border-black/5 px-8 py-3 text-base font-semibold leading-7 text-gray-600 transition-colors hover:bg-gray-200">
-                  <div className="flex h-11 w-11 flex-none items-center justify-center rounded-lg border border-black/10 shadow-md shadow-black/5 transition duration-200 group-hover:bg-gray-50">
-                    <Icon className="h-6 w-6" />
+                <div className="group flex items-center gap-x-6 border-b border-white/10 px-8 py-3 text-base font-semibold leading-7 text-gray-300 transition-colors hover:bg-white/10 hover:text-white">
+                  <div className="flex h-11 w-11 flex-none items-center justify-center rounded-lg border border-white/20 shadow-md transition duration-200 group-hover:bg-white/10">
+                    <Icon className="h-6 w-6 [filter:brightness(0)_invert(1)]" />
                   </div>
 
                   {category.title ?? category.slug ?? "Category"}
