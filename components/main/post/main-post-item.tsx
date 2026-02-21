@@ -107,7 +107,7 @@ const MainPostItem: React.FC<MainPostItemProps> = async ({ post }) => {
                     <div className="inline-flex items-center text-gray-500">
                       <CalendarIcon className="h-4 w-4" />
                       <span className="ml-1">
-                        {format(parseISO(post.updated_at ?? post.created_at ?? new Date().toISOString()), "dd/MM/yyyy")}
+                        {format(parseISO(post.published_at ?? post.created_at ?? new Date().toISOString()), "dd/MM/yyyy")}
                       </span>
                     </div>
                     <div className="inline-flex items-center text-gray-500">
@@ -125,7 +125,7 @@ const MainPostItem: React.FC<MainPostItemProps> = async ({ post }) => {
                     <div className="inline-flex items-center text-gray-500">
                       <CalendarIcon className="h-4 w-4" />
                       <span className="ml-1">
-                        {format(parseISO(post.updated_at ?? post.created_at ?? new Date().toISOString()), "MMMM dd, yyyy")}
+                        {format(parseISO(post.published_at ?? post.created_at ?? new Date().toISOString()), "MMMM dd, yyyy")}
                       </span>
                     </div>
                     <div className="inline-flex items-center text-gray-500">
