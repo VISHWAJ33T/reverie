@@ -47,6 +47,17 @@ async function getPost(postId: string, userId: string) {
   return data ? data : null;
 }
 
+async function getPublishedPostDate(postId: string) {
+  const cookieStore = await cookies();
+  const supabase = createClient(cookieStore);
+  const { data } = await supabase
+    .from("posts")
+    .select("published_at")
+    .eq("id", postId)
+    .single();
+  return data?.published_at ?? null;
+}
+
 async function getCategories() {
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
@@ -151,6 +162,18 @@ async function getGalleryImageUrls(
   return filePublicUrls;
 }
 
+async function getIsAdmin(userId: string | null) {
+  if (!userId) return false;
+  const cookieStore = await cookies();
+  const supabase = createClient(cookieStore);
+  const { data } = await supabase
+    .from("profiles")
+    .select("is_admin")
+    .eq("id", userId)
+    .single();
+  return data?.is_admin === true;
+}
+
 export default async function PostEditorPage({ params }: PostEditorPageProps) {
   const resolvedParams = await params;
   const bucketNameCoverImage =
@@ -158,10 +181,15 @@ export default async function PostEditorPage({ params }: PostEditorPageProps) {
   const bucketNameGalleryImage =
     process.env.NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET_GALLERY_IMAGE!;
   const userId = await getUserId();
-  const [post, categories] = await Promise.all([
+  const [post, categories, isAdmin] = await Promise.all([
     getPost(resolvedParams.postId, userId || ""),
     getCategories(),
+    getIsAdmin(userId),
   ]);
+  const postPublishedAt =
+    post?.status === "published" && post?.post_id
+      ? await getPublishedPostDate(post.post_id)
+      : null;
 
   // Cover image setup
   const coverImageFileName = await getCoverImageFileName(
@@ -210,6 +238,9 @@ export default async function PostEditorPage({ params }: PostEditorPageProps) {
         coverImagePublicUrl={coverImagePublicUrl || ""}
         galleryImageFileNames={galleryImageFileNames || []}
         galleryImagePublicUrls={galleryImagePublicUrls || []}
+        isAdmin={isAdmin}
+        postId={post.status === "published" && post.post_id ? post.post_id : null}
+        postPublishedAt={postPublishedAt}
       />
     </div>
   );

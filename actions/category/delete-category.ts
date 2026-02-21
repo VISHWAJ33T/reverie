@@ -1,10 +1,13 @@
 "use server";
 
+import { getCurrentUserIsAdmin } from "@/lib/auth";
 import { ActionResult, actionError, actionSuccess } from "@/types/action";
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 
 export async function DeleteCategory(id: string): Promise<ActionResult<boolean>> {
+  const isAdmin = await getCurrentUserIsAdmin();
+  if (!isAdmin) return actionError("Only admins can delete categories.");
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
   try {

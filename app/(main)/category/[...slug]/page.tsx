@@ -108,7 +108,7 @@ export default async function CategoryPage({
     .from("posts")
     .select(`*, categories(*), profiles(*)`)
     .match({ category_id: category.id, published: true })
-    .order("created_at", { ascending: false })
+    .order("published_at", { ascending: false, nullsFirst: false })
     .range(from, to)
     .returns<PostWithCategoryWithProfile[]>();
 

@@ -39,7 +39,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
     .from("posts")
     .select(`*, categories(*), profiles(*)`)
     .eq("published", true)
-    .order("created_at", { ascending: false })
+    .order("published_at", { ascending: false, nullsFirst: false })
     .range(from, to)
     .returns<PostWithCategoryWithProfile[]>();
 

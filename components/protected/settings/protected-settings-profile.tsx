@@ -77,7 +77,6 @@ const ProtectedSettingsProfile: FC<ProtectedSettingsProfileProps> = ({
     firstName: user.full_name?.split(" ")[0] || "",
     lastName: user.full_name?.split(" ")[1] || "",
     userName: user.username || "",
-    website: user.website || "",
   };
 
   const form = useForm<ProfileFormValues>({
@@ -95,8 +94,6 @@ const ProtectedSettingsProfile: FC<ProtectedSettingsProfileProps> = ({
       lastName: data.lastName,
       avatarUrl: avatarUrl || "",
       userName: data.userName,
-      email: data.email,
-      website: data.website,
     });
 
     if (response) {
@@ -199,19 +196,6 @@ const ProtectedSettingsProfile: FC<ProtectedSettingsProfileProps> = ({
                   </FormItem>
                 )}
               />
-            </CardContent>
-          </Card>
-
-          {/* User information */}
-          <Card className="max-w-2xl">
-            <CardHeader>
-              <CardTitle>{protectedProfileConfig.secondaryTitle}</CardTitle>
-              <CardDescription>
-                {protectedProfileConfig.secondarySubTitle}
-              </CardDescription>
-            </CardHeader>
-            <Separator className="mb-8" />
-            <CardContent className="space-y-4">
               <FormField
                 control={form.control}
                 name="userName"
@@ -229,41 +213,19 @@ const ProtectedSettingsProfile: FC<ProtectedSettingsProfileProps> = ({
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{protectedProfileConfig.email}</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder={protectedProfileConfig.emailPlaceholder}
-                        {...field}
-                        className="max-w-md"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="website"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{protectedProfileConfig.website}</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder={protectedProfileConfig.websitePlaceholder}
-                        {...field}
-                        className="max-w-md"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="space-y-2">
+                <FormLabel>Email</FormLabel>
+                <Input
+                  value={user.email ?? ""}
+                  readOnly
+                  disabled
+                  className="max-w-md bg-muted text-muted-foreground"
+                  aria-label="Email (read-only)"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Email cannot be changed here.
+                </p>
+              </div>
             </CardContent>
           </Card>
 

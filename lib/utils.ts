@@ -70,6 +70,16 @@ export const toBase64 = (str: string) =>
 
 export const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+/** Decode HTML entities (e.g. &lt; → <) so escaped content from DB displays as HTML. */
+export function decodeHtmlEntities(html: string): string {
+  return html
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
+}
+
 // Sanitize HTML to prevent XSS attacks
 export function sanitizeHtml(html: string): string {
   return sanitize(html, {

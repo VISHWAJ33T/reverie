@@ -1,6 +1,6 @@
 import type { NavCategory } from "@/lib/categories";
 import { LoginMenu } from "@/components/login";
-import { IconWrapperRounded, LogoIcon } from "@/icons";
+import { LogoIcon } from "@/icons";
 import Link from "next/link";
 import React from "react";
 import { MainDesktopNavigationMenu } from "./menu";
@@ -12,24 +12,24 @@ interface MainDesktopNavigationProps {
 const MainDesktopNavigation = ({ navCategories }: MainDesktopNavigationProps) => {
   return (
     <>
-      <nav className="mx-auto hidden max-w-5xl items-center justify-between px-2 py-4 md:flex">
-        {/* Logo */}
-        <div className="flex flex-1 justify-start pl-2">
+      <nav className="mx-auto hidden max-w-5xl items-center justify-between px-2 py-2 md:flex">
+        {/* Logo: black container, white icon, 3:2 aspect ratio */}
+        <div className="flex flex-1 justify-start">
           <Link href="/" className="flex shrink-0 items-center">
-            <IconWrapperRounded className="size-10">
-              <LogoIcon className="h-8 w-8 max-h-8 max-w-8" />
-            </IconWrapperRounded>
+            <div className="flex h-14 shrink-0 items-center justify-center overflow-hidden rounded-md bg-black aspect-3/2">
+              <LogoIcon className="h-12 max-h-12" />
+            </div>
           </Link>
         </div>
 
         {/* Navigation */}
         <div>
-          <div className="flex flex-1 gap-x-6">
+          <div className="flex flex-1 gap-x-6 py-2">
             <MainDesktopNavigationMenu navCategories={navCategories} />
           </div>
         </div>
 
-        {/* Login Menu */}
+        {/* Login / profile */}
         <div className="flex flex-1 justify-end">
           <LoginMenu />
         </div>

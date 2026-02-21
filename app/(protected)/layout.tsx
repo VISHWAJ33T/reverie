@@ -19,14 +19,20 @@ const ProtectedLayout: React.FC<ProtectedLayoutProps> = async ({
     error,
   } = await supabase.auth.getUser();
   if (error || !user) {
-    // This route can only be accessed by authenticated users.
-    // Unauthenticated users will be redirected to the `/login` route.
     redirect("/login");
   }
 
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("is_admin")
+    .eq("id", user.id)
+    .single();
+
+  const isAdmin = profile?.is_admin === true;
+
   return (
     <>
-      <ProtectedMain>{children}</ProtectedMain>
+      <ProtectedMain isAdmin={isAdmin}>{children}</ProtectedMain>
     </>
   );
 };

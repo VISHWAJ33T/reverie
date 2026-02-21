@@ -30,7 +30,14 @@ export async function GET(request: Request) {
     const cookieStore = await cookies();
     const supabase = createClient(cookieStore);
 
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { data: sessionData, error } = await supabase.auth.exchangeCodeForSession(code);
+    if (!error && sessionData?.user?.email) {
+      // Sync email to profiles for admin Users page (idempotent upsert of profile row)
+      await supabase
+        .from("profiles")
+        .update({ email: sessionData.user.email })
+        .eq("id", sessionData.user.id);
+    }
     if (!error) {
       // URL to redirect to after sign in process completes
       return NextResponse.redirect(redirectUrl);

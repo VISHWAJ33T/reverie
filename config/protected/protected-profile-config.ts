@@ -15,8 +15,6 @@ const protectedProfileConfig = {
   userNamePlaceholder: "Your username",
   email: "Email",
   emailPlaceholder: "Your email",
-  website: "Website",
-  websitePlaceholder: "https://your-website.com",
   update: "Update Profile",
   changeAvatar: "Change Avatar",
   uploadNote: "JPG, GIF or PNG. 5MB max.",

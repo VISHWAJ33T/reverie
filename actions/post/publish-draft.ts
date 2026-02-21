@@ -1,12 +1,14 @@
 "use server";
 
+import { getCurrentUserIsAdmin } from "@/lib/auth";
 import { ActionResult, actionError, actionSuccess } from "@/types/action";
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 
-export async function PublishDraft(draftId: string): Promise<
-  ActionResult<{ postSlug: string }>
-> {
+export async function PublishDraft(
+  draftId: string,
+  publishAt?: string | null
+): Promise<ActionResult<{ postSlug: string }>> {
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
 
@@ -32,6 +34,15 @@ export async function PublishDraft(draftId: string): Promise<
     }
 
     const now = new Date().toISOString();
+    let published_at: string = now;
+    if (publishAt != null && publishAt.trim() !== "") {
+      const isAdmin = await getCurrentUserIsAdmin();
+      if (!isAdmin) return actionError("Only admins can set the publish date.");
+      const date = new Date(publishAt);
+      if (Number.isNaN(date.getTime())) return actionError("Invalid publish date.");
+      published_at = date.toISOString();
+    }
+
     const { data: post, error: insertError } = await supabase
       .from("posts")
       .insert({
@@ -43,6 +54,7 @@ export async function PublishDraft(draftId: string): Promise<
         content: draft.content,
         image: draft.image,
         published: true,
+        published_at: published_at,
         updated_at: now,
       })
       .select("id, slug")

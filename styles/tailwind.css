@@ -184,6 +184,31 @@
   .focus-within-ring {
     @apply rounded-sm transition duration-75 ease-in-out focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-500/75 focus-within:ring-offset-2;
   }
+
+  /* Prose: typography for editor and blog/about (no plugin dependency) */
+  .prose { font-size: 1rem; line-height: 1.75; color: inherit; }
+  .prose h1 { font-size: 2em; font-weight: 700; margin: 0.67em 0; line-height: 1.2; }
+  .prose h2 { font-size: 1.5em; font-weight: 600; margin: 0.83em 0 0.5em; line-height: 1.3; }
+  .prose h3 { font-size: 1.25em; font-weight: 600; margin: 1em 0 0.5em; line-height: 1.4; }
+  .prose h4, .prose h5, .prose h6 { font-size: 1em; font-weight: 600; margin: 1em 0 0.5em; }
+  .prose p { margin: 0 0 1em; }
+  .prose ul { margin: 0 0 1em; padding-left: 1.625em; list-style: disc outside none !important; }
+  .prose ol { margin: 0 0 1em; padding-left: 1.625em; list-style: decimal outside none !important; }
+  .prose li { margin-bottom: 0.25em; display: list-item !important; }
+  .prose ul ul, .prose ol ul { list-style: circle outside none !important; }
+  .prose ol ol, .prose ul ol { list-style: lower-alpha outside none !important; }
+  .prose blockquote { border-left: 4px solid hsl(var(--border)); padding-left: 1em; margin: 1em 0; font-style: italic; color: hsl(var(--muted-foreground)); }
+  .prose pre { padding: 1em; border-radius: 0.375rem; background: hsl(var(--muted)); overflow-x: auto; margin: 1em 0; font-size: 0.875em; }
+  .prose code { font-size: 0.875em; background: hsl(var(--muted)); padding: 0.2em 0.4em; border-radius: 0.25rem; }
+  .prose pre code { background: none; padding: 0; }
+  .prose a { color: hsl(199 89% 48%); text-decoration: underline; }
+  .prose strong { font-weight: 600; }
+  .prose img { max-width: 100%; height: auto; }
+  .prose hr { margin: 2em 0; border: 0; border-top: 1px solid hsl(var(--border)); }
+  .prose-sm { font-size: 0.875rem; }
+  .prose-sm h1 { font-size: 1.875em; }
+  .prose-sm h2 { font-size: 1.5em; }
+  .prose-sm h3 { font-size: 1.25em; }
 }
 
 /* Utilities layer */
@@ -216,3 +241,9 @@
     animation: loading 8s ease-in-out infinite;
   }
 }
+
+/* Prose list markers: ensure bullets/numbers show (override preflight) */
+.prose ul { list-style: disc outside !important; padding-left: 1.625rem !important; }
+.prose ol { list-style: decimal outside !important; padding-left: 1.625rem !important; }
+.prose li { display: list-item !important; }
+.prose ul[data-type="taskList"] { list-style: none !important; }

@@ -121,7 +121,7 @@ function nodeToHtml(node: JsonNode): string {
   }
 }
 
-function isLikelyJson(content: string): boolean {
+export function isLikelyJson(content: string): boolean {
   const trimmed = content.trim();
   return trimmed.startsWith("{") && (trimmed.includes('"type"') || trimmed.includes("'type'"));
 }

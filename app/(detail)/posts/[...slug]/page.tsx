@@ -183,7 +183,7 @@ export default async function PostPage({ params }: PostPageProps) {
                   authorId={post.author_id}
                   authorName={post.profiles.full_name as string}
                   authorImage={post.profiles.avatar_url as string}
-                  date={format(parseISO(post.updated_at ?? post.created_at ?? new Date().toISOString()), "MMMM dd, yyyy")}
+                  date={format(parseISO(post.published_at ?? post.created_at ?? new Date().toISOString()), "MMMM dd, yyyy")}
                   category={post.categories?.title as string}
                   readTime={readTime as ReadTimeResults}
                 />
@@ -204,10 +204,10 @@ export default async function PostPage({ params }: PostPageProps) {
               {/* Content */}
               <div className="relative mx-auto max-w-3xl border-slate-500/50 py-5">
                 <div
-                  className="lg:prose-md prose"
+                  className="prose prose-gray max-w-none dark:prose-invert"
                   dangerouslySetInnerHTML={{
-                  __html: sanitizeHtml(postContentToHtml(post.content)),
-                }}
+                    __html: sanitizeHtml(postContentToHtml(post.content)),
+                  }}
                 />
               </div>
               <div className="mx-auto mt-10">

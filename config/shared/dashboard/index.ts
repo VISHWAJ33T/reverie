@@ -1,7 +1,9 @@
+export { default as dashBoardAbout } from "./dashboard-about";
 export { default as dashBoardBookMark } from "./dashboard-bookmark";
 export { default as dashBoardCategories } from "./dashboard-categories";
 export { default as dashBoardLogout } from "./dashboard-logout";
 export { default as dashBoardPost } from "./dashboard-post";
 export { default as dashBoardProfile } from "./dashboard-profile";
 export { default as dashBoardSettings } from "./dashboard-settings";
+export { default as dashBoardUsers } from "./dashboard-users";
 export { default as dashBoardMenu } from "./dashboard-menu";

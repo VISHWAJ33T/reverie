@@ -74,7 +74,12 @@ export default function WysiwygEditor({
     onDebouncedUpdate(editor);
   }, debounceDuration);
 
+  // Use ref so editor is created once with this content; avoids reset on parent re-render.
+  const initialContentRef = useRef(defaultValue);
+  const initialContent = initialContentRef.current ?? defaultEditorContent;
+
   const editor = useEditor({
+    content: initialContent,
     extensions: [...defaultExtensions, ...extensions],
     editorProps: {
       ...defaultEditorProps,
@@ -86,14 +91,14 @@ export default function WysiwygEditor({
     },
   });
 
-  // Hydrate the editor only once when it's first created. Do NOT re-run when
-  // defaultValue changes (e.g. when parent's content state updates), or the
-  // editor would be reset on every debounced update and the cursor would jump to the end.
-  const initialContentRef = useRef(defaultValue);
+  // When editor is created asynchronously (e.g. Next.js client mount), initial HTML may show as
+  // raw text. setContent(html) parses HTML; apply once so formatted content displays correctly.
+  const hasSetInitialContent = useRef(false);
   useEffect(() => {
-    if (!editor) return;
+    if (!editor || hasSetInitialContent.current) return;
+    hasSetInitialContent.current = true;
     const contentToSet = initialContentRef.current ?? defaultEditorContent;
-    if (contentToSet) {
+    if (typeof contentToSet === "string" && contentToSet.trim() && contentToSet !== "<p></p>") {
       editor.commands.setContent(contentToSet);
     }
   }, [editor]);

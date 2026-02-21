@@ -1,10 +1,3 @@
-import {
-  FacebookIcon,
-  GithubIcon,
-  InstagramIcon,
-  TwitterIcon,
-  YoutubeIcon,
-} from "@/icons/socials";
 import { FooterType } from "@/types";
 
 const mainFooterConfig: FooterType = {
@@ -15,61 +8,13 @@ const mainFooterConfig: FooterType = {
       slug: "/",
     },
     {
-      title: "About",
+      title: "About Us",
       slug: "/about",
     },
-    {
-      title: "Docs",
-      slug: "/docs",
-    },
-    {
-      title: "Changelogs",
-      slug: "/changelogs",
-    },
-    {
-      title: "Contact",
-      slug: "/contact",
-    },
   ],
-
-  socials: [
-    {
-      name: "Facebook",
-      url: "https://facebook.com",
-      icon: FacebookIcon,
-    },
-    {
-      name: "Github",
-      url: "https://github.com",
-      icon: GithubIcon,
-    },
-    {
-      name: "Instagram",
-      url: "https://instagram.com",
-      icon: InstagramIcon,
-    },
-    {
-      name: "Twitter",
-      url: "https://twitter.com",
-      icon: TwitterIcon,
-    },
-    {
-      name: "Youtube",
-      url: "https://youtube.com",
-      icon: YoutubeIcon,
-    },
-  ],
-  legals: [
-    {
-      title: "Terms",
-      slug: "/terms",
-    },
-    {
-      title: "Policy",
-      slug: "/policy",
-    },
-  ],
-  copyright: "© 2026 Reverie. All rights reserved.",
+  socials: [],
+  legals: [],
+  copyright: "",
 };
 
 export default mainFooterConfig;

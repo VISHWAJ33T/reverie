@@ -1,8 +1,9 @@
 "use server";
 
+import type { Category } from "@/lib/categories";
+import { getCurrentUserIsAdmin } from "@/lib/auth";
 import { categoryCreateSchema } from "@/lib/validation/category";
 import { ActionResult, actionError, actionSuccess } from "@/types/action";
-import type { Category } from "@/lib/categories";
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 import * as z from "zod";
@@ -10,6 +11,8 @@ import * as z from "zod";
 export async function CreateCategory(
   context: z.infer<typeof categoryCreateSchema>
 ): Promise<ActionResult<Category>> {
+  const isAdmin = await getCurrentUserIsAdmin();
+  if (!isAdmin) return actionError("Only admins can create categories.");
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
   try {

@@ -227,6 +227,7 @@ export interface Database {
           id: string
           image: string | null
           published: boolean | null
+          published_at: string | null
           slug: string | null
           title: string | null
           updated_at: string | null
@@ -240,6 +241,7 @@ export interface Database {
           id?: string
           image?: string | null
           published?: boolean | null
+          published_at?: string | null
           slug?: string | null
           title?: string | null
           updated_at?: string | null
@@ -253,6 +255,7 @@ export interface Database {
           id?: string
           image?: string | null
           published?: boolean | null
+          published_at?: string | null
           slug?: string | null
           title?: string | null
           updated_at?: string | null
@@ -277,25 +280,28 @@ export interface Database {
           avatar_url: string | null
           full_name: string | null
           id: string
+          is_admin: boolean
+          email: string | null
           updated_at: string | null
           username: string | null
-          website: string | null
         }
         Insert: {
           avatar_url?: string | null
           full_name?: string | null
           id: string
+          is_admin?: boolean
+          email?: string | null
           updated_at?: string | null
           username?: string | null
-          website?: string | null
         }
         Update: {
           avatar_url?: string | null
           full_name?: string | null
           id?: string
+          is_admin?: boolean
+          email?: string | null
           updated_at?: string | null
           username?: string | null
-          website?: string | null
         }
         Relationships: [
           {
@@ -305,6 +311,36 @@ export interface Database {
             referencedColumns: ["id"]
           }
         ]
+      }
+      about_page: {
+        Row: {
+          id: string
+          title: string
+          sub_title: string
+          description: string
+          features: Json
+          content: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          title?: string
+          sub_title?: string
+          description?: string
+          features?: Json
+          content?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          title?: string
+          sub_title?: string
+          description?: string
+          features?: Json
+          content?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
     }
     Views: {

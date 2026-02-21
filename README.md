@@ -26,7 +26,6 @@ The application uses Supabase PostgreSQL database with Row Level Security (RLS) 
 - **Editor**: TipTap (WYSIWYG)
 - **Forms**: React Hook Form with Zod validation
 - **Icons**: HeroIcons & Lucide Icons
-- **Email**: NodeMailer with React Email
 - **Analytics**: Vercel Analytics
 
 ## ⌨️ Code Quality
