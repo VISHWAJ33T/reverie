@@ -12,7 +12,7 @@ const ProtectedMobileMenuButton: FC<ProtectedMobileMenuButtonProps> = ({
   return (
     <button
       type="button"
-      className="-m-2.5 p-2.5 text-gray-700 lg:hidden"
+      className="-m-2.5 p-2.5 text-white lg:hidden"
       onClick={() => setSidebarOpen(true)}
     >
       <span className="sr-only">Open sidebar</span>

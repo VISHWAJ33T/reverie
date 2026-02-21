@@ -15,21 +15,21 @@ const ProtectedTopBar = () => {
         <button
           type="button"
           onClick={() => router.back()}
-          className="relative flex flex-1 items-center"
+          className="relative flex flex-1 items-center text-gray-300 hover:text-white"
         >
           <ArrowLeftIcon
-            className="mr-2 h-5 w-5 text-gray-400"
+            className="mr-2 h-5 w-5"
             aria-hidden="true"
           />
-          <span className="text-sm text-gray-500">Go Back</span>
+          <span className="text-sm">Go Back</span>
         </button>
       ) : (
-        <Link href="/" className="relative flex flex-1 items-center">
+        <Link href="/" className="relative flex flex-1 items-center text-gray-300 hover:text-white">
           <ArrowLeftIcon
-            className="mr-2 h-5 w-5 text-gray-400"
+            className="mr-2 h-5 w-5"
             aria-hidden="true"
           />
-          <span className="text-sm text-gray-500">Go Back to Homepage</span>
+          <span className="text-sm">Go Back to Homepage</span>
         </Link>
       )}
     </>
