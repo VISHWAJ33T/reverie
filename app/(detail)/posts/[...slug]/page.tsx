@@ -204,10 +204,10 @@ export default async function PostPage({ params }: PostPageProps) {
               {/* Content */}
               <div className="relative mx-auto max-w-3xl border-slate-500/50 py-5">
                 <div
-                  className="lg:prose-md prose"
+                  className="prose prose-gray max-w-none dark:prose-invert"
                   dangerouslySetInnerHTML={{
-                  __html: sanitizeHtml(postContentToHtml(post.content)),
-                }}
+                    __html: sanitizeHtml(postContentToHtml(post.content)),
+                  }}
                 />
               </div>
               <div className="mx-auto mt-10">
