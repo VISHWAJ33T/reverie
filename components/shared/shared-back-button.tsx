@@ -6,13 +6,17 @@ import React from "react";
 interface BackButtonProps {
   className?: string;
   url?: string;
+  /** Use "dark" when the button is on a dark (e.g. black) background so icon is light. */
+  variant?: "default" | "dark";
 }
 
 const SharedBackButton: React.FC<BackButtonProps> = ({
   className = "",
   url = "/",
+  variant = "default",
 }) => {
   const router = useRouter();
+  const isDark = variant === "dark";
   return (
     <button
       type="button"
@@ -25,7 +29,13 @@ const SharedBackButton: React.FC<BackButtonProps> = ({
         }
       }}
     >
-      <div className="rounded-full border border-slate-300 bg-slate-50 p-2.5 shadow-sm">
+      <div
+        className={
+          isDark
+            ? "rounded-full border border-white/20 bg-white/10 p-2.5 shadow-sm"
+            : "rounded-full border border-slate-300 bg-slate-50 p-2.5 shadow-sm"
+        }
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -33,7 +43,11 @@ const SharedBackButton: React.FC<BackButtonProps> = ({
           strokeWidth="2"
           stroke="currentColor"
           aria-hidden="true"
-          className="h-5 w-5 text-slate-500 group-hover:text-slate-700"
+          className={
+            isDark
+              ? "h-5 w-5 text-white group-hover:text-white/80"
+              : "h-5 w-5 text-slate-500 group-hover:text-slate-700"
+          }
         >
           <path
             strokeLinecap="round"

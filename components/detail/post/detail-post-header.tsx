@@ -11,16 +11,16 @@ interface DetailPostHeaderProps {
 const DetailPostHeader: React.FC<DetailPostHeaderProps> = ({ title }) => {
   const completion = useReadingProgress();
   return (
-    <header className="border-y-1 sticky top-0 z-40 border-black/5 bg-gray-50/60 shadow-sm shadow-gray-300 backdrop-blur-lg">
+    <header className="sticky top-0 z-40 border-y border-white/10 bg-black shadow-sm backdrop-blur-lg">
       <nav
         className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4"
         aria-label="Global"
       >
         <div className="flex flex-none items-center justify-start">
-          <SharedBackButton />
+          <SharedBackButton variant="dark" />
         </div>
         <div className="flex w-full max-w-3xl">
-          <h1 className="text-md justify-start px-4 font-semibold tracking-tight text-slate-900 sm:px-0 sm:text-xl">
+          <h1 className="text-md justify-start px-4 font-semibold tracking-tight text-white sm:px-0 sm:text-xl">
             {title}
           </h1>
         </div>
@@ -30,7 +30,7 @@ const DetailPostHeader: React.FC<DetailPostHeaderProps> = ({ title }) => {
       </nav>
       <span
         style={{ transform: `translateX(${completion - 100}%)` }}
-        className="absolute bottom-0 h-1 w-full bg-gray-400"
+        className="absolute bottom-0 h-1 w-full bg-white/20"
       />
     </header>
   );
