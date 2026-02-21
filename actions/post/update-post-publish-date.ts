@@ -6,7 +6,7 @@ import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
 
 /**
- * Updates the publish date (created_at) of a post. Admin only.
+ * Updates the publish date (published_at) of a post. Admin only.
  * postId is the posts.id (the published post row), not the draft id.
  */
 export async function UpdatePostPublishDate(
@@ -24,7 +24,7 @@ export async function UpdatePostPublishDate(
 
   const { error } = await supabase
     .from("posts")
-    .update({ created_at: date.toISOString() })
+    .update({ published_at: date.toISOString() })
     .eq("id", postId);
 
   if (error) {

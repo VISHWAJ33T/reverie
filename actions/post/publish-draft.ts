@@ -34,13 +34,13 @@ export async function PublishDraft(
     }
 
     const now = new Date().toISOString();
-    let created_at: string = now;
+    let published_at: string = now;
     if (publishAt != null && publishAt.trim() !== "") {
       const isAdmin = await getCurrentUserIsAdmin();
       if (!isAdmin) return actionError("Only admins can set the publish date.");
       const date = new Date(publishAt);
       if (Number.isNaN(date.getTime())) return actionError("Invalid publish date.");
-      created_at = date.toISOString();
+      published_at = date.toISOString();
     }
 
     const { data: post, error: insertError } = await supabase
@@ -54,7 +54,7 @@ export async function PublishDraft(
         content: draft.content,
         image: draft.image,
         published: true,
-        created_at: created_at,
+        published_at: published_at,
         updated_at: now,
       })
       .select("id, slug")
