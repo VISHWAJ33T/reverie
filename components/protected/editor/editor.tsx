@@ -107,6 +107,7 @@ const Editor: FC<EditorProps> = ({
     toDatetimeLocal(postPublishedAt)
   );
   const [publishDateSaving, setPublishDateSaving] = useState(false);
+  const [scheduledPublishDate, setScheduledPublishDate] = useState<string>("");
 
   // Editor
   const [saveStatus, setSaveStatus] = useState("Saved");
@@ -221,7 +222,9 @@ const Editor: FC<EditorProps> = ({
       return;
     }
 
-    const publishResult = await PublishDraft(post.id);
+    const publishAt =
+      isAdmin && scheduledPublishDate.trim() ? scheduledPublishDate.trim() : undefined;
+    const publishResult = await PublishDraft(post.id, publishAt);
 
     if (publishResult.success && publishResult.data) {
       toast.success(protectedPostConfig.successPublish);
@@ -370,6 +373,27 @@ const Editor: FC<EditorProps> = ({
               />
             </CardContent>
           </Card>
+
+          {/* Publish date when publishing (admin only, drafts) */}
+          {isAdmin && post.status !== "published" && (
+            <Card className="max-w-2xl">
+              <CardHeader>
+                <CardTitle>Publish date</CardTitle>
+                <CardDescription>
+                  Set the date to show when this post is published (optional). Leave empty to use the current time. Only admins can set this.
+                </CardDescription>
+              </CardHeader>
+              <Separator className="mb-8" />
+              <CardContent className="space-y-4">
+                <input
+                  type="datetime-local"
+                  value={scheduledPublishDate}
+                  onChange={(e) => setScheduledPublishDate(e.target.value)}
+                  className="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                />
+              </CardContent>
+            </Card>
+          )}
 
           {/* Publish date (admin only, published posts only) */}
           {isAdmin && postId && postPublishedAt != null && (
