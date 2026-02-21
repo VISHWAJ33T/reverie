@@ -16,7 +16,7 @@ export async function UpdateSettings(
     const { error } = await supabase
       .from("profiles")
       .update({
-        full_name: `${profile.firstName} ${profile.lastName}`,
+        full_name: [profile.firstName, profile.lastName].filter(Boolean).join(" ").trim() || profile.firstName,
         username: profile.userName,
         avatar_url: profile.avatarUrl,
         updated_at: new Date().toISOString(),
